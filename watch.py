@@ -7,7 +7,26 @@ from twscrape import API
 TG_TOKEN = os.environ["TG_TOKEN"]
 TG_CHAT = os.environ["TG_CHAT"]
 X_USERNAME = os.environ["X_USERNAME"]
-X_COOKIES = os.environ["X_COOKIES"]  # "auth_token=...; ct0=..."
+
+
+def _clean(v):
+    return (v or "").strip().strip('"').strip("'").replace("\n", "").replace("\r", "").replace(" ", "")
+
+
+def build_cookies():
+    auth, ct0 = _clean(os.environ.get("X_AUTH_TOKEN")), _clean(os.environ.get("X_CT0"))
+    if auth and ct0:
+        return f"auth_token={auth}; ct0={ct0}"
+    raw = (os.environ.get("X_COOKIES") or "").strip()
+    if "auth_token=" in raw and "ct0=" in raw:
+        return raw
+    raise SystemExit(
+        "X cookies missing: add secrets X_AUTH_TOKEN and X_CT0 "
+        f"(auth_token set={bool(auth)}, ct0 set={bool(ct0)}, X_COOKIES length={len(raw)})"
+    )
+
+
+X_COOKIES = build_cookies()
 
 QUERY = os.environ.get("X_QUERY") or (
     '("need video editor" OR "hiring video editor" OR "video editor wanted" '
