@@ -1,3 +1,5 @@
 accounts.db
 __pycache__/
 .env
+.venv/
+watch.log

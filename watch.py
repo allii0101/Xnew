@@ -35,7 +35,7 @@ QUERY = os.environ.get("X_QUERY") or (
     'OR "need a video editor" OR "hiring a video editor" OR "مطلوب مونتير") '
     "-filter:replies -filter:retweets"
 )
-FRESH_MINUTES = 20          # ignore tweets older than this (avoids flooding on first run)
+FRESH_MINUTES = int(os.environ.get("FRESH_MINUTES", "45"))  # ignore tweets older than this (must be > run interval)
 ALERT_EVERY_HOURS = 12      # how often to repeat a "monitoring is broken" alert
 STATE_FILE = "state.json"
 

@@ -7,5 +7,5 @@ python3 -m pip install -q twscrape requests
 while true; do
   rm -f accounts.db
   python3 watch.py
-  sleep 120
+  sleep 1800
 done
