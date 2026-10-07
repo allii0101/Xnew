@@ -3,6 +3,7 @@ from datetime import datetime, timezone, timedelta
 
 import requests
 from twscrape import API
+from twscrape.logger import set_log_level
 
 TG_TOKEN = os.environ["TG_TOKEN"]
 TG_CHAT = os.environ["TG_CHAT"]
@@ -64,14 +65,21 @@ def save_state(state):
 async def main():
     state = load_state()
     seen = set(state["seen"])
+    set_log_level("INFO")
     api = API("accounts.db")
     await api.pool.add_account(X_USERNAME, "unused", "unused@example.com", "unused", cookies=X_COOKIES)
 
-    try:
-        tweets = []
+    async def fetch():
+        out = []
         async for t in api.search(QUERY, limit=40, kv={"product": "Latest"}):
-            tweets.append(t)
+            out.append(t)
+        return out
+
+    try:
+        tweets = await asyncio.wait_for(fetch(), timeout=90)
     except Exception as e:
+        if isinstance(e, asyncio.TimeoutError):
+            e = RuntimeError("timeout: X not answering (account rate-limited, locked, or cookies rejected)")
         if time.time() - state.get("last_alert", 0) > ALERT_EVERY_HOURS * 3600:
             tg(f"⚠️ مراقبة تويتر وقفت: {type(e).__name__}: {str(e)[:200]}\nغالباً الكوكيز انتهت أو X رفض الدخول.")
             state["last_alert"] = time.time()
