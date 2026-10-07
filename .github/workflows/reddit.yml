@@ -1,0 +1,34 @@
+name: watch-reddit
+on:
+  schedule:
+    - cron: "*/10 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: watch-reddit
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install requests
+      - run: python reddit_watch.py
+        env:
+          TG_TOKEN: ${{ secrets.TG_TOKEN }}
+          TG_CHAT: ${{ secrets.TG_CHAT }}
+      - name: Save seen posts
+        if: always()
+        run: |
+          git config user.name "watch-bot"
+          git config user.email "watch-bot@users.noreply.github.com"
+          git add reddit_state.json || true
+          git diff --cached --quiet || (git commit -m "update reddit state" && git pull --rebase && git push)
