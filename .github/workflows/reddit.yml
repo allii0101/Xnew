@@ -3,6 +3,10 @@ on:
   schedule:
     - cron: "*/10 * * * *"
   workflow_dispatch:
+    inputs:
+      fresh_minutes:
+        description: "Look back this many minutes (test: 1440 = last 24h)"
+        default: "90"
 
 permissions:
   contents: write
@@ -26,6 +30,7 @@ jobs:
           TG_TOKEN: ${{ secrets.TG_TOKEN }}
           TG_TOKEN_REDDIT: ${{ secrets.TG_TOKEN_REDDIT }}
           TG_CHAT: ${{ secrets.TG_CHAT }}
+          FRESH_MINUTES: ${{ inputs.fresh_minutes || '90' }}
       - name: Save seen posts
         if: always()
         run: |
