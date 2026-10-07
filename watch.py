@@ -97,9 +97,9 @@ async def main():
         tid = str(t.id)
         if tid in seen:
             continue
-        seen.add(tid)
         if t.date < cutoff:
-            continue
+            continue  # too old for this run; don't mark seen so /check can still find it
+        seen.add(tid)
         text = (t.rawContent or "").strip().replace("\n", " ")[:300]
         tg(f"🎬 @{t.user.username}\n{text}\n\n{t.url}")
         sent += 1
