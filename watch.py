@@ -30,14 +30,14 @@ def build_cookies():
 X_COOKIES = build_cookies()
 
 QUERY = os.environ.get("X_QUERY") or (
-    '("need video editor" OR "hiring video editor" OR "video editor wanted" '
-    'OR "looking for video editor" OR "looking for a video editor" '
-    'OR "need a video editor" OR "hiring a video editor" '
-    'OR "video editor needed" OR "looking for an editor" OR "need an editor" '
-    'OR "hiring editor" OR "hiring an editor" OR "freelance video editor" '
-    'OR "reels editor" OR "short form editor" '
-    'OR "مطلوب مونتير" OR "مونتير مطلوب" OR "محتاج مونتير" OR "عايز مونتير" '
-    'OR "نحتاج مونتير" OR "مطلوب محرر فيديو" OR "مطلوب مصمم فيديو") '
+    # intent word + role phrase anywhere in the tweet (catches lists like "Looking for: ... Video Editor")
+    '(("looking for" OR hiring OR need OR needed OR wanted OR seeking OR recruiting OR "in need of") '
+    '("video editor" OR "video editors" OR "reels editor" OR "short form editor")) '
+    'OR ("editor needed") OR ("editor wanted") '
+    'OR (مونتير (مطلوب OR محتاج OR عايز OR نحتاج OR "ابحث عن")) '
+    'OR ("محرر فيديو" مطلوب) '
+    # drop editors advertising themselves
+    '-"for hire" -"hire me" -"available for" -"open for" -"my services" -"tags :" '
     "-filter:replies -filter:retweets"
 )
 FRESH_MINUTES = int(os.environ.get("FRESH_MINUTES", "45"))  # ignore tweets older than this (must be > run interval)
