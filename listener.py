@@ -34,6 +34,8 @@ def run_scan():
     m = re.search(r"fetched=(\d+) sent=(\d+)", out)
     if p.returncode == 0 and m:
         n = int(m.group(2))
+        li = re.search(r"li_sent=(\d+)", out)
+        n += int(li.group(1)) if li else 0
         return f"✅ خلص الفحص. جديد: {n}" if n else "✅ خلص الفحص. مفيش تويتات جديدة دلوقتي."
     return "⚠️ الفحص فشل:\n" + out.strip()[-300:]
 

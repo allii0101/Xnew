@@ -11,4 +11,6 @@ fi
 trap 'rmdir "$LOCK" 2>/dev/null' EXIT
 set -a; source .env; set +a
 rm -f accounts.db
-./.venv/bin/python watch.py
+./.venv/bin/python watch.py; RC=$?
+./.venv/bin/python linkedin_watch.py || true
+exit $RC
