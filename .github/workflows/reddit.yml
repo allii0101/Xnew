@@ -24,6 +24,7 @@ jobs:
       - run: python reddit_watch.py
         env:
           TG_TOKEN: ${{ secrets.TG_TOKEN }}
+          TG_TOKEN_REDDIT: ${{ secrets.TG_TOKEN_REDDIT }}
           TG_CHAT: ${{ secrets.TG_CHAT }}
       - name: Save seen posts
         if: always()

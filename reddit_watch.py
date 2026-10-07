@@ -4,7 +4,7 @@ import xml.etree.ElementTree as ET
 from datetime import datetime, timezone, timedelta
 import requests
 
-TG_TOKEN = os.environ["TG_TOKEN"].strip()
+TG_TOKEN = (os.environ.get("TG_TOKEN_REDDIT") or os.environ["TG_TOKEN"]).strip()
 TG_CHAT = os.environ["TG_CHAT"].strip()
 try:
     from zoneinfo import ZoneInfo
