@@ -3,3 +3,5 @@ __pycache__/
 .env
 .venv/
 watch.log
+.lock/
+listener.log
