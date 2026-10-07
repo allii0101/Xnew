@@ -2,6 +2,11 @@ import asyncio, json, os, time
 from datetime import datetime, timezone, timedelta
 
 import requests
+try:
+    from zoneinfo import ZoneInfo
+    CAIRO = ZoneInfo("Africa/Cairo")
+except Exception:
+    CAIRO = timezone(timedelta(hours=3))
 from twscrape import API
 from twscrape.logger import set_log_level
 
@@ -101,7 +106,11 @@ async def main():
             continue  # too old for this run; don't mark seen so /check can still find it
         seen.add(tid)
         text = (t.rawContent or "").strip().replace("\n", " ")[:300]
-        tg(f"🎬 @{t.user.username}\n{text}\n\n{t.url}")
+        local = t.date.astimezone(CAIRO)
+        mins = max(0, int((datetime.now(timezone.utc) - t.date).total_seconds() // 60))
+        ago = f"{mins} دقيقة" if mins < 60 else f"{mins // 60} ساعة و{mins % 60} دقيقة"
+        tg(f"🎬 @{t.user.username}\n{text}\n\n"
+           f"🕒 نُشر: {local.strftime('%Y-%m-%d %I:%M %p')} (من {ago})\n\n{t.url}")
         sent += 1
 
     state["seen"] = list(seen)
